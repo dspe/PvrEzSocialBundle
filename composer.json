@@ -1,0 +1,25 @@
+{
+  "name": "dspe/pvrezsocialbundle",
+  "description": "pvr EzSocial Bundle",
+  "keywords": ["symfony2", "networks", "social", "twitter", "pvr", "ezpublish", "ezplatform" ],
+  "homepage": "https://github.com/dspe/PvrEzSocialBundle",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Philippe Vincent-Royol",
+      "homepage": "http://www.pheelit.fr/"
+    }
+  ],
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "require": {
+    "php": ">=5.4",
+    "abraham/twitteroauth": "^0.6.4"
+  },
+  "autoload": {
+    "psr-0": {
+      "pvr\\EzSocialBundle": ""
+    }
+  },
+  "target-dir": "pvr/EzSocialBundle"
+}

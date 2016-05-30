@@ -1,0 +1,13 @@
+services:
+    pvr_ezsocial.twitter.handler:
+        class: Pvr\EzSocialBundle\Networks\Handler\TwitterHandler
+        arguments:
+            - "@service_container"
+            - "@logger"
+
+
+    pvr_ezsocial.onpublish_slot:
+        class: Pvr\EzSocialBundle\Slot\OnPublishSlot
+        arguments: [@ezpublish.api.service.content, @logger, @pvr_ezsocial.twitter.handler]
+        tags:
+          - { name: ezpublish.api.slot, signal: ContentService\PublishVersionSignal }
