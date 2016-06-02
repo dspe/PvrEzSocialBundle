@@ -14,7 +14,8 @@
   "prefer-stable": true,
   "require": {
     "php": ">=5.4",
-    "abraham/twitteroauth": "^0.6.4"
+    "abraham/twitteroauth": "^0.6.4",
+    "facebook/php-sdk-v4": "^5.2"
   },
   "autoload": {
     "psr-0": {

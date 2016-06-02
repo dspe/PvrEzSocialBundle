@@ -1,13 +1,26 @@
 services:
+    pvr_ezsocial.networks:
+        class: Pvr\EzSocialBundle\Networks\NetworkHandler
+        arguments:
+            - "@service_container"
+
     pvr_ezsocial.twitter.handler:
         class: Pvr\EzSocialBundle\Networks\Handler\TwitterHandler
         arguments:
             - "@service_container"
             - "@logger"
+        tags:
+            - { name: pvr_ezsocial.network, alias: twitter }
 
 
     pvr_ezsocial.onpublish_slot:
         class: Pvr\EzSocialBundle\Slot\OnPublishSlot
-        arguments: [@ezpublish.api.service.content, @logger, @pvr_ezsocial.twitter.handler]
+        arguments:
+            - "@ezpublish.api.service.content"
+            - "@ezpublish.api.service.content_type"
+            - "@logger"
+            - "@pvr_ezsocial.twitter.handler"
+            - "@pvr_ezsocial.networks"
+            - "%pvr_ezsocial.content_type%"
         tags:
           - { name: ezpublish.api.slot, signal: ContentService\PublishVersionSignal }

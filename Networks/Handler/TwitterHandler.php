@@ -6,6 +6,7 @@ use Abraham\TwitterOAuth\TwitterOAuth;
 use Psr\Log\LoggerInterface;
 use Pvr\EzSocialBundle\Networks\NetworkInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class TwitterHandler implements NetworkInterface
 {
@@ -13,19 +14,24 @@ class TwitterHandler implements NetworkInterface
      * @var TwitterOAuth
      */
     private $connection;
+    private $container;
     protected $consumer_key;
     protected $consumer_secret;
     protected $access_token;
     protected $access_secret;
+    //protected $content_types;
     private $logger;
 
     public function __construct(ContainerInterface $container, LoggerInterface $logger)
     {
-        $this->consumer_key     = $container->getParameter('pvr_ezsocial.networks.twitter.consumer_key');
-        $this->consumer_secret  = $container->getParameter('pvr_ezsocial.networks.twitter.consumer_secret');
-        $this->access_token     = $container->getParameter('pvr_ezsocial.networks.twitter.access_token');
-        $this->access_secret    = $container->getParameter('pvr_ezsocial.networks.twitter.access_secret');
+        $networks = $container->getParameter('pvr_ezsocial.networks');
+        $this->consumer_key     = $networks['twitter']['consumer_key'];
+        $this->consumer_secret  = $networks['twitter']['consumer_secret'];
+        $this->access_token     = $networks['twitter']['access_token'];
+        $this->access_secret    = $networks['twitter']['access_secret'];
+       // $this->content_types    = $networks['twitter']['content_type'];
         $this->logger = $logger;
+        $this->container = $container;
         $this->connect();
     }
 
@@ -46,14 +52,32 @@ class TwitterHandler implements NetworkInterface
         );
     }
 
+    /**
+     * @param $parameters
+     */
     public function publish($parameters)
     {
         if (!isset($parameters['status'])) {
             $this->logger->debug('Twitter: No status parameters');
+            exit;
         }
 
+        if (!isset($parameters['locationId'])) {
+            $this->logger->debug('Twitter: No Location ID found');
+            exit;
+        }
+
+        $location = $this->container->get('ezpublish.api.repository')
+            ->getLocationService()->loadLocation($parameters['locationId']);
+
+        $locationUrl = $this->container->get('router')->generate(
+            $location,
+            ['siteaccess' => $parameters['siteaccess']],
+            UrlGeneratorInterface::ABSOLUTE_URL
+        );
+
         $this->connection->post("statuses/update", [
-            "status" => $parameters['status']
+            "status" => $parameters['status'] . " " . $locationUrl
         ]);
 
         if ($this->connection->getLastHttpCode() != 200) {

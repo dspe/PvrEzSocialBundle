@@ -27,11 +27,9 @@ class PvrEzSocialExtension extends Extension
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
-        $container->setParameter('pvr_ezsocial.networks.twitter.consumer_key', $config['networks']['twitter']['consumer_key']);
-        $container->setParameter('pvr_ezsocial.networks.twitter.consumer_secret', $config['networks']['twitter']['consumer_secret']);
-        $container->setParameter('pvr_ezsocial.networks.twitter.access_token', $config['networks']['twitter']['access_token']);
-        $container->setParameter('pvr_ezsocial.networks.twitter.access_secret', $config['networks']['twitter']['access_secret']);
-
+        $container->setParameter('pvr_ezsocial.networks', $config['networks']);
+        $container->setParameter('pvr_ezsocial.content_type', $config['content_type']);
+        
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
     }
